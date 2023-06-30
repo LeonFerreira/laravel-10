@@ -19,6 +19,7 @@ class SupportController extends Controller
     public function index(Request $request)
     {
         $supports = $this->service->getAll($request->filter);
+        dd($supports);
 
         return view('admin/supports/index', compact('supports'));
     }
@@ -53,15 +54,13 @@ class SupportController extends Controller
         return view('admin/supports/edit', compact('support'));
     }
 
-    public function update(StoreUpdateSupport $request, Support $support, string $id)
+    public function update(StoreUpdateSupport $request, Support $support)
     {
-        $this->service->update(UpdateSupportDTO::makeFromRequest);
+        $this->service->update(UpdateSupportDTO::makeFromRequest($request));
 
-        if (!$support = $support->find($id)) {
+        if (!$support) {
             return back();
         }
-
-        $support->update($request->validated());
 
         return redirect()->route('supports.index');
     }
